@@ -10,6 +10,7 @@ notesController.createNewNote = async (req, res) => {
   const { title, description } = req.body;
 
   const newNote = new Note({ title, description });
+  newNote.user = req.user.id;
   await newNote.save();
   req.flash("success_msg", "Note added successfully");
 
@@ -17,13 +18,17 @@ notesController.createNewNote = async (req, res) => {
 };
 
 notesController.renderAllNotes = async (req, res) => {
-  const notes = await Note.find().lean();
+  const notes = await Note.find({ user: req.user.id }).lean();
 
   res.render("notes/all-notes", { notes });
 };
 
 notesController.renderEditForm = async (req, res) => {
   const noteToEdit = await Note.findById(req.params.id).lean();
+  if (noteToEdit.user != req.user.id) {
+    req.flash("error_msg", "Not authorized");
+    res.redirect("/notes");
+  }
   res.render("notes/edit-notes", { noteToEdit });
 };
 
