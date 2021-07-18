@@ -1,5 +1,6 @@
 const usersController = {};
 const user = require("../models/User");
+const passport = require("passport");
 
 usersController.renderSignUpForm = (req, res) => {
   res.render("users/signup");
@@ -45,12 +46,16 @@ usersController.renderSignInForm = (req, res) => {
   res.render("users/signin");
 };
 
-usersController.signIn = (req, res) => {
-  res.send("sifnin");
-};
+usersController.signIn = passport.authenticate("local", {
+  failureRedirect: "/users/signin",
+  successRedirect: "/notes",
+  failureFlash: true,
+});
 
 usersController.logOut = (req, res) => {
-  res.send("logo out");
+  req.logout();
+  req.flash("success_msg", "Session closed successfully");
+  res.redirect("/users/signin");
 };
 
 module.exports = usersController;

@@ -17,6 +17,6 @@ router.get("/users/signin", renderSignInForm);
 
 router.post("/users/signin", signIn);
 
-router.get("users/logout", logOut);
+router.get("/users/logout", logOut);
 
 module.exports = router;
